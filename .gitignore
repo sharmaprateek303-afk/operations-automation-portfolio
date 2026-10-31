@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Generated demo data and outputs (re-create with generate_sample_data.py / run.py)
+*/data/*.json
+*/data/*.csv
+*/data/feeds/
+*/output/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+~$*
+.vscode/
+.idea/

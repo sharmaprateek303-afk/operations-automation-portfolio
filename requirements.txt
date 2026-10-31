@@ -1,0 +1,3 @@
+# Project 1 (dashboard) and Project 3 (bridges) use the Python standard library only.
+# Project 2 (reconciliation) writes Excel workbooks:
+openpyxl==3.1.5
