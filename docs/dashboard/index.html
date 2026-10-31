@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dispute SLA Dashboard (demo)</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+  :root { --bg:#f6f7f9; --card:#fff; --ink:#1d2433; --muted:#5b6475; --line:#e3e6ec;
+          --good:#1a7f37; --bad:#b42318; --warn:#9a6700; --accent:#2457c5; }
+  * { box-sizing:border-box; }
+  body { margin:0; font:14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; background:var(--bg); color:var(--ink); }
+  header { display:flex; flex-wrap:wrap; align-items:center; gap:12px; padding:16px 24px; background:var(--card); border-bottom:1px solid var(--line); }
+  header h1 { font-size:18px; margin:0 auto 0 0; }
+  .muted { color:var(--muted); }
+  main { padding:20px 24px; max-width:1280px; margin:0 auto; }
+  .tabs { display:flex; gap:6px; flex-wrap:wrap; margin-bottom:16px; }
+  .tabs button, .btn { border:1px solid var(--line); background:var(--card); padding:6px 14px; border-radius:6px; cursor:pointer; font:inherit; color:var(--ink); }
+  .tabs button[aria-selected="true"] { background:var(--accent); border-color:var(--accent); color:#fff; }
+  .btn:focus-visible, .tabs button:focus-visible, input:focus-visible, select:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+  .kpis { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:12px; margin-bottom:16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:8px; padding:14px 16px; }
+  .kpi .label { color:var(--muted); font-size:12px; text-transform:uppercase; letter-spacing:.04em; }
+  .kpi .value { font-size:28px; font-weight:600; margin:4px 0; }
+  .kpi .delta { font-size:12px; }
+  .good { color:var(--good); } .bad { color:var(--bad); } .warn { color:var(--warn); }
+  .charts { display:grid; grid-template-columns:2fr 1fr; gap:12px; margin-bottom:16px; }
+  @media (max-width: 900px) { .charts { grid-template-columns:1fr; } }
+  .card h2 { font-size:14px; margin:0 0 10px; }
+  .chart-box { position:relative; height:280px; }
+  .toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:10px; }
+  input, select { font:inherit; padding:6px 8px; border:1px solid var(--line); border-radius:6px; }
+  table { width:100%; border-collapse:collapse; }
+  th, td { text-align:left; padding:7px 8px; border-bottom:1px solid var(--line); white-space:nowrap; }
+  th { font-size:12px; color:var(--muted); font-weight:600; position:sticky; top:0; background:var(--card); }
+  .table-wrap { max-height:420px; overflow:auto; }
+  .pill { display:inline-block; padding:1px 8px; border-radius:10px; font-size:12px; font-weight:600; }
+  .pill.missed { background:#fde8e7; color:var(--bad); }
+  .pill.at_risk { background:#fff4d6; color:var(--warn); }
+  .pill.on_track { background:#e6f4ea; color:var(--good); }
+  .err { color:var(--bad); }
+</style>
+</head>
+<body>
+<header>
+  <a class="btn" href="../">&larr; Portfolio</a>
+  <h1>Dispute SLA Dashboard <span class="muted">(synthetic demo data)</span></h1>
+  <span class="muted" id="asof" aria-live="polite"></span>
+  <button class="btn" id="refresh" type="button">Refresh</button>
+</header>
+<main>
+  <div class="tabs" role="tablist" aria-label="Region" id="tabs"></div>
+
+  <section class="kpis" aria-label="Key metrics">
+    <div class="card kpi"><div class="label">Resolution rate in SLA</div><div class="value" id="k-rrs">–</div><div class="delta" id="k-rrs-d"></div></div>
+    <div class="card kpi"><div class="label">Initial disputes</div><div class="value" id="k-vol">–</div><div class="delta" id="k-vol-d"></div></div>
+    <div class="card kpi"><div class="label">Re-dispute rate</div><div class="value" id="k-red">–</div><div class="delta" id="k-red-d"></div></div>
+    <div class="card kpi"><div class="label">Open backlog</div><div class="value" id="k-open">–</div><div class="delta" id="k-open-d"></div></div>
+  </section>
+
+  <section class="charts">
+    <div class="card"><h2>Resolution rate in SLA by week</h2><div class="chart-box"><canvas id="trend" aria-label="Weekly resolution rate in SLA versus target" role="img"></canvas></div></div>
+    <div class="card"><h2 id="mix-title">Dispute mix</h2><div class="chart-box"><canvas id="mix" aria-label="Dispute type mix for the headline week" role="img"></canvas></div></div>
+  </section>
+
+  <section class="card" aria-labelledby="open-title">
+    <h2 id="open-title">Open tickets by SLA deadline</h2>
+    <div class="toolbar">
+      <label>Search <input id="q" type="search" placeholder="ticket, station, partner"></label>
+      <label>SLA <select id="sla">
+        <option value="">All</option><option value="missed">Missed</option>
+        <option value="at_risk">At risk (&lt;24h)</option><option value="on_track">On track</option>
+      </select></label>
+      <button class="btn" id="csv" type="button">Export CSV</button>
+      <span class="muted" id="count" aria-live="polite"></span>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th scope="col">Ticket</th><th scope="col">Region</th><th scope="col">Station</th><th scope="col">Partner</th>
+          <th scope="col">Type</th><th scope="col">Kind</th><th scope="col">Created</th><th scope="col">Deadline</th><th scope="col">Hours left</th><th scope="col">SLA</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+  <p class="err" id="error" role="alert"></p>
+</main>
+
+<script>
+const state = { data: null, region: "All", charts: {} };
+const pct = v => v == null ? "–" : (v * 100).toFixed(1) + "%";
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+async function load() {
+  try {
+    const res = await fetch("data.json", { cache: "no-store" });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || res.statusText);
+    state.data = json;
+    document.getElementById("error").textContent = "";
+    render();
+  } catch (e) {
+    document.getElementById("error").textContent = "Could not load data: " + e.message;
+  }
+}
+
+function metricsFor(region) {
+  return state.data.metrics.filter(m => m.region === region);
+}
+
+function renderTabs() {
+  const tabs = document.getElementById("tabs");
+  tabs.innerHTML = "";
+  state.data.regions.forEach(r => {
+    const b = document.createElement("button");
+    b.type = "button"; b.role = "tab"; b.textContent = r;
+    b.setAttribute("aria-selected", r === state.region);
+    b.onclick = () => { state.region = r; render(); };
+    tabs.appendChild(b);
+  });
+}
+
+function setDelta(id, cur, prev, { asPct = false, higherIsBetter = true } = {}) {
+  const el = document.getElementById(id);
+  if (cur == null || prev == null) { el.textContent = ""; return; }
+  const diff = cur - prev;
+  const better = higherIsBetter ? diff >= 0 : diff <= 0;
+  const txt = asPct ? `${diff >= 0 ? "+" : ""}${(diff * 10000).toFixed(0)} bps WoW` : `${diff >= 0 ? "+" : ""}${diff} WoW`;
+  el.textContent = txt;
+  el.className = "delta " + (diff === 0 ? "muted" : better ? "good" : "bad");
+}
+
+function renderKpis() {
+  const d = state.data, m = metricsFor(state.region);
+  const cur = m.find(x => x.week === d.headline_week) || {};
+  const prev = m[m.indexOf(cur) - 1] || {};
+  const rrs = document.getElementById("k-rrs");
+  rrs.textContent = pct(cur.resolution_rate_in_sla);
+  rrs.className = "value " + (cur.resolution_rate_in_sla >= d.target_rrs ? "good" : "bad");
+  setDelta("k-rrs-d", cur.resolution_rate_in_sla, prev.resolution_rate_in_sla, { asPct: true });
+  document.getElementById("k-vol").textContent = cur.initial_disputes ?? "–";
+  setDelta("k-vol-d", cur.initial_disputes, prev.initial_disputes, { higherIsBetter: false });
+  document.getElementById("k-red").textContent = pct(cur.re_dispute_rate);
+  setDelta("k-red-d", cur.re_dispute_rate, prev.re_dispute_rate, { asPct: true, higherIsBetter: false });
+  const open = openRows();
+  document.getElementById("k-open").textContent = open.length;
+  const missed = open.filter(r => r.sla_status === "missed").length;
+  const risk = open.filter(r => r.sla_status === "at_risk").length;
+  const od = document.getElementById("k-open-d");
+  od.textContent = `${missed} missed · ${risk} at risk`;
+  od.className = "delta " + (missed ? "bad" : risk ? "warn" : "good");
+}
+
+function renderCharts() {
+  const d = state.data, m = metricsFor(state.region);
+  const labels = m.map(x => x.week);
+  state.charts.trend?.destroy();
+  state.charts.trend = new Chart(document.getElementById("trend"), {
+    type: "line",
+    data: { labels, datasets: [
+      { label: "Resolution rate in SLA", data: m.map(x => x.resolution_rate_in_sla), borderColor: "#2457c5", backgroundColor: "#2457c5", tension: .25 },
+      { label: `Target ${pct(d.target_rrs)}`, data: labels.map(() => d.target_rrs), borderColor: "#b42318", borderDash: [6, 4], pointRadius: 0 },
+    ]},
+    options: { maintainAspectRatio: false, scales: { y: { min: .7, max: 1, ticks: { callback: v => (v * 100) + "%" } } },
+      plugins: { tooltip: { callbacks: { label: c => `${c.dataset.label}: ${pct(c.raw)}` } } } },
+  });
+  const mix = d.mix[state.region] || {};
+  document.getElementById("mix-title").textContent = `Dispute mix, ${d.headline_week}`;
+  state.charts.mix?.destroy();
+  state.charts.mix = new Chart(document.getElementById("mix"), {
+    type: "bar",
+    data: { labels: Object.keys(mix), datasets: [{ label: "Initial disputes", data: Object.values(mix), backgroundColor: "#6b8fd6" }] },
+    options: { indexAxis: "y", maintainAspectRatio: false, plugins: { legend: { display: false } } },
+  });
+}
+
+function openRows() {
+  return state.data.open_tickets.filter(r => state.region === "All" || r.region === state.region);
+}
+
+function filteredRows() {
+  const q = document.getElementById("q").value.trim().toLowerCase();
+  const sla = document.getElementById("sla").value;
+  return openRows().filter(r => (!sla || r.sla_status === sla) &&
+    (!q || [r.ticket_id, r.station, r.partner, r.dispute_type].join(" ").toLowerCase().includes(q)));
+}
+
+function renderTable() {
+  const rows = filteredRows();
+  document.getElementById("count").textContent = `${rows.length} tickets`;
+  document.getElementById("rows").innerHTML = rows.map(r => `<tr>
+    <td>${esc(r.ticket_id)}</td><td>${esc(r.region)}</td><td>${esc(r.station)}</td><td>${esc(r.partner)}</td>
+    <td>${esc(r.dispute_type)}</td><td>${esc(r.kind)}</td><td>${esc(r.created_at.replace("T", " "))}</td>
+    <td>${esc(r.sla_deadline.replace("T", " "))}</td><td>${esc(r.hours_to_deadline)}</td>
+    <td><span class="pill ${esc(r.sla_status)}">${esc(r.sla_status.replace("_", " "))}</span></td></tr>`).join("");
+}
+
+function exportCsv() {
+  const cols = ["ticket_id", "region", "station", "partner", "dispute_type", "kind", "created_at", "sla_deadline", "hours_to_deadline", "sla_status"];
+  const lines = [cols.join(",")].concat(filteredRows().map(r => cols.map(c => `"${String(r[c] ?? "").replace(/"/g, '""')}"`).join(",")));
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([lines.join("\n")], { type: "text/csv" }));
+  a.download = `open_tickets_${state.region}_${state.data.as_of.slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function render() {
+  document.getElementById("asof").textContent = "Data as of " + state.data.as_of.replace("T", " ");
+  renderTabs(); renderKpis(); renderCharts(); renderTable();
+}
+
+document.getElementById("refresh").onclick = load;
+document.getElementById("q").oninput = renderTable;
+document.getElementById("sla").onchange = renderTable;
+document.getElementById("csv").onclick = exportCsv;
+load();
+
+</script>
+</body>
+</html>

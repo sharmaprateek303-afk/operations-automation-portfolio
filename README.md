@@ -1,5 +1,7 @@
 # Prateek Tiwari | Operations Analytics & Automation Portfolio
 
+**[▶ Open the live demos](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/)**
+
 I turn manual, spreadsheet-heavy operations work into reliable, automated
 systems. These three projects come from partner-payment operations in a
 large-scale last-mile delivery network: tracking dispute SLAs, reconciling
@@ -13,11 +15,11 @@ partner invoices, and explaining weekly metric movements to leadership.
 
 ## Projects
 
-| # | Project | What it does | Stack |
-|---|---|---|---|
-| 1 | [Dispute SLA Dashboard](01-dispute-sla-dashboard) | Self-refreshing KPI dashboard tracking dispute resolution against a 3-business-day SLA, with an at-risk queue | Python (stdlib), JavaScript, Chart.js |
-| 2 | [Invoice Reconciliation Engine](02-invoice-reconciliation) | Validates every invoice line against five operational feeds and produces matched / exception workbooks split across reviewers | Python, openpyxl |
-| 3 | [Weekly Business Review Bridges](03-weekly-business-review-bridges) | Explains week-over-week metric changes by driver, finds the root cause of each SLA miss, and writes the leadership narrative | Python (stdlib) |
+| # | Project | What it does | Stack | Live demo |
+|---|---|---|---|---|
+| 1 | [Dispute SLA Dashboard](01-dispute-sla-dashboard) | Self-refreshing KPI dashboard tracking dispute resolution against a 3-business-day SLA, with an at-risk queue | Python (stdlib), JavaScript, Chart.js | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/dashboard/) |
+| 2 | [Invoice Reconciliation Engine](02-invoice-reconciliation) | Validates every invoice line against five operational feeds and produces matched / exception workbooks split across reviewers | Python, openpyxl | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/reconciliation/) |
+| 3 | [Weekly Business Review Bridges](03-weekly-business-review-bridges) | Explains week-over-week metric changes by driver, finds the root cause of each SLA miss, and writes the leadership narrative | Python (stdlib) | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/bridges/) |
 
 ## Impact at a glance
 
