@@ -1,34 +1,154 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Weekly Business Review Bridges | Prateek Tiwari</title><link rel="stylesheet" href="../assets/site.css"></head>
+<title>Weekly Business Review Bridges | Prateek Tiwari</title><meta name="description" content="Operations automation portfolio by Prateek Tiwari">
+<link rel="stylesheet" href="../assets/site.css"><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script></head>
 <body><header class="top"><a class="brand" href="../">Prateek Tiwari · Operations Automation</a>
-<a href="../dashboard/">Dashboard</a><a href="../reconciliation/">Reconciliation</a><a href="../bridges/">WBR bridges</a>
-<a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Code on GitHub</a></header>
-<main><div class="doc"><p class="muted" style="max-width:780px">Generated end to end from raw synthetic tickets: each metric change is
-split into drivers that add up exactly to the headline number, every SLA miss gets one root cause, repeat sites are flagged,
-and data-quality issues are listed before anything reaches leadership. <a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/03-weekly-business-review-bridges">How it works</a>.</p><h1>Weekly Business Review: dispute bridges, week 43</h1>
+<a href="../dashboard/">SLA dashboard</a><a href="../reconciliation/">Reconciliation</a><a href="../bridges/">WBR bridges</a>
+<a href="../outreach/">Outreach agent</a><a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Code</a></header>
+<main><section class="hero"><span class="eyebrow">Project 3 · Automated reporting</span><h1>Weekly Business Review Bridges</h1><p class="lead">Leadership doesn&#x27;t just want the number, they want why it moved. This engine reads every ticket, splits each change into the drivers behind it, root-causes every SLA miss and writes the narrative.</p>
+<div class="ba"><div class="box"><div class="k">Before</div><div class="big">~7 hours</div><div class="s">reading tickets by hand before every weekly review</div></div>
+<div class="arrow" aria-hidden="true">➜</div>
+<div class="box after"><div class="k">After</div><div class="big">~30 min</div><div class="s">generated bridge, narrative and tables, reviewed and sent</div></div></div>
+<p><button class="btn light" id="gen" type="button">▶ Generate this week's bridge</button> <a class="btn ghost" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/03-weekly-business-review-bridges">View code</a></p></section>
+<div class="console" style="margin-top:4px">
+  <div class="card"><h3 style="margin-top:0">What the engine does, step by step</h3>
+    <ol class="steps" id="steps">
+      <li><span class="ic">1</span><div><strong>Load raw tickets</strong><div class="d">860 tickets across 2 business lines, week 43 vs 42</div></div></li>
+      <li><span class="ic">2</span><div><strong>Compute the three review metrics</strong><div class="d">dispute rate, invalid rate, SLA rate, for each line</div></div></li>
+      <li><span class="ic">3</span><div><strong>Decompose every change into drivers</strong><div class="d">22 driver contributions that add up exactly to each headline change</div></div></li>
+      <li><span class="ic">4</span><div><strong>Root-cause every SLA miss</strong><div class="d">21 misses, one accountable cause each; repeat sites flagged</div></div></li>
+      <li><span class="ic">5</span><div><strong>Run data-quality checks</strong><div class="d">2 issue(s) found and listed before anything reaches leadership</div></div></li>
+      <li><span class="ic">6</span><div><strong>Write the leadership narrative</strong><div class="d">paragraph, speakable version and supporting tables</div></div></li>
+    </ol>
+    <p class="note" id="gennote">The real engine runs all six steps in 0.01 s.</p>
+  </div>
+  <div class="card"><h3 style="margin-top:0">Leadership bridge <span class="muted" id="lead-line"></span></h3>
+    <p class="typed done" id="typed">Press "Generate this week's bridge" to watch it being written.</p>
+    <h3>Speakable version</h3><p class="muted" id="speak">–</p></div>
+</div>
+
+<section id="analysis" class="hidden">
+<h2>Week 43 analysis</h2>
+<div class="tabs" role="tablist" aria-label="Business line" id="tabs"></div>
+<div class="grid g4" id="kpis"></div>
+<div class="grid g2" style="margin-top:14px">
+  <div class="card"><h3 style="margin-top:0">Dispute rate bridge, week 42 → 43</h3>
+    <div class="chart-box"><canvas id="ch-wf" role="img" aria-label="Waterfall of dispute rate change by driver"></canvas></div>
+    <p class="note">Each bar is one driver's contribution in percentage points. They reconcile exactly to the headline change.</p></div>
+  <div class="card"><h3 style="margin-top:0">Why SLAs were missed</h3>
+    <div class="chart-box"><canvas id="ch-sla" role="img" aria-label="SLA misses by root cause"></canvas></div>
+    <div id="repeat"></div></div>
+</div>
+<h2>Caught before it reached leadership</h2>
+<div class="grid g2" id="notes"></div>
+<h2>The generated document</h2>
+<details><summary><strong>Open the full week 43 review document</strong> <span class="muted">exactly as the engine wrote it</span></summary>
+<div class="body doc"><h2>Weekly Business Review: dispute bridges, week 43</h2>
 <p><em>Generated from synthetic demo data.</em></p>
-<h2>1. Leadership bridge</h2>
+<h3>1. Leadership bridge</h3>
 <p><strong>Line A.</strong> The dispute rate rose 301 bps week over week to 14.3% (127 disputes on 888 eligible combinations), driven by Late cancellation (30 to 51, +245 bps) and Coverage bonus (3 to 9, +68 bps). The invalid rate rose 321 bps to 36.2%; the main rejection reasons moving were Already paid (9 to 4, -559 bps) and Not supported by route plan (9 to 16, +386 bps). SLA performance was 89.8%, below the 95.0% target (114 met, 13 missed, 0 still open within SLA). Missed tickets break down as 10 waiting on site input, 3 late first response. Site UK03 (5 misses) held tickets waiting on its input and is flagged for follow-up.</p>
 <p><strong>Line B.</strong> The dispute rate rose 338 bps week over week to 10.1% (43 disputes on 424 eligible combinations), driven by Missing route (3 to 13, +234 bps) and Late cancellation (7 to 11, +90 bps). The invalid rate rose 382 bps to 39.5%; the main rejection reasons moving were Site confirmed no adjustment due (1 to 6, +1038 bps) and Not supported by route plan (6 to 5, -980 bps). SLA performance was 81.4%, below the 95.0% target (35 met, 8 missed, 0 still open within SLA). Missed tickets break down as 8 waiting on site input. Site IT04 (7 misses) held tickets waiting on its input and is flagged for follow-up.</p>
-<h2>2. Speakable version</h2>
+<h3>2. Speakable version</h3>
 <p>For Line A, the dispute rate rose 301 bps to 14.3% mostly from late cancellation. We resolved 89.8% of disputes within SLA, with 13 misses this week. For Line B, the dispute rate rose 338 bps to 10.1% mostly from missing route. We resolved 81.4% of disputes within SLA, with 8 misses this week.</p>
-<h2>3. Supporting tables</h2>
-<h3>Line A</h3>
+<h3>3. Supporting tables</h3>
+<h4>Line A</h4>
 <p><strong>Dispute rate drivers (by use case)</strong></p>
 <table><thead><tr><th scope="col">Driver</th><th scope="col" class=num>Prev wk</th><th scope="col" class=num>This wk</th><th scope="col" class=num>Contribution (bps)</th></tr></thead><tbody><tr><td>Late cancellation</td><td class=num>30</td><td class=num>51</td><td class=num>+245</td></tr><tr><td>Coverage bonus</td><td class=num>3</td><td class=num>9</td><td class=num>+68</td></tr><tr><td>Missing route</td><td class=num>23</td><td class=num>17</td><td class=num>-61</td></tr><tr><td>Rate mismatch</td><td class=num>16</td><td class=num>18</td><td class=num>+27</td></tr><tr><td>Training day</td><td class=num>10</td><td class=num>12</td><td class=num>+25</td></tr><tr><td>Duration mismatch</td><td class=num>21</td><td class=num>20</td><td class=num>-5</td></tr><tr><td><strong>Total</strong></td><td class=num><strong>103</strong></td><td class=num><strong>127</strong></td><td class=num><strong>+301 bps</strong></td></tr></tbody></table>
 <p><strong>Invalid disputes by rejection reason</strong></p>
 <table><thead><tr><th scope="col">Driver</th><th scope="col" class=num>Prev wk</th><th scope="col" class=num>This wk</th><th scope="col" class=num>Contribution (bps)</th></tr></thead><tbody><tr><td>Already paid</td><td class=num>9</td><td class=num>4</td><td class=num>-559</td></tr><tr><td>Not supported by route plan</td><td class=num>9</td><td class=num>16</td><td class=num>+386</td></tr><tr><td>Submitted outside dispute window</td><td class=num>4</td><td class=num>8</td><td class=num>+242</td></tr><tr><td>Site confirmed no adjustment due</td><td class=num>10</td><td class=num>14</td><td class=num>+131</td></tr><tr><td>Unspecified</td><td class=num>2</td><td class=num>4</td><td class=num>+121</td></tr><tr><td><strong>Total</strong></td><td class=num><strong>34</strong></td><td class=num><strong>46</strong></td><td class=num><strong>+321 bps</strong></td></tr></tbody></table>
 <p><strong>SLA misses, week 43</strong></p>
 <table><thead><tr><th scope="col">Ticket</th><th scope="col">Site</th><th scope="col">Partner</th><th scope="col">Root cause</th><th scope="col" class=num>Hours late</th></tr></thead><tbody><tr><td>D-5695</td><td>FR02</td><td>Partner FR02-Z</td><td>Waiting on site input</td><td class=num>36.6</td></tr><tr><td>D-5814</td><td>UK03</td><td>Partner UK03-Y</td><td>Waiting on site input</td><td class=num>36.0</td></tr><tr><td>D-5713</td><td>DE02</td><td>Partner DE02-Y</td><td>Waiting on site input</td><td class=num>24.6</td></tr><tr><td>D-5796</td><td>UK03</td><td>Partner UK03-Z</td><td>Waiting on site input</td><td class=num>24.6</td></tr><tr><td>D-5687</td><td>DE05</td><td>Partner DE05-X</td><td>Waiting on site input</td><td class=num>22.9</td></tr><tr><td>D-5811</td><td>UK03</td><td>Partner UK03-X</td><td>Waiting on site input</td><td class=num>22.0</td></tr><tr><td>D-5714</td><td>UK04</td><td>Partner UK04-Z</td><td>Waiting on site input</td><td class=num>16.4</td></tr><tr><td>D-5710</td><td>UK03</td><td>Partner UK03-Y</td><td>Waiting on site input</td><td class=num>14.3</td></tr><tr><td>D-5740</td><td>FR05</td><td>Partner FR05-Z</td><td>Waiting on site input</td><td class=num>11.5</td></tr><tr><td>D-5738</td><td>UK03</td><td>Partner UK03-X</td><td>Waiting on site input</td><td class=num>9.6</td></tr><tr><td>D-5703</td><td>UK07</td><td>Partner UK07-Z</td><td>Late first response</td><td class=num>6.0</td></tr><tr><td>D-5719</td><td>FR05</td><td>Partner FR05-Z</td><td>Late first response</td><td class=num>6.0</td></tr><tr><td>D-5809</td><td>DE05</td><td>Partner DE05-Z</td><td>Late first response</td><td class=num>6.0</td></tr></tbody></table>
-<h3>Line B</h3>
+<h4>Line B</h4>
 <p><strong>Dispute rate drivers (by use case)</strong></p>
 <table><thead><tr><th scope="col">Driver</th><th scope="col" class=num>Prev wk</th><th scope="col" class=num>This wk</th><th scope="col" class=num>Contribution (bps)</th></tr></thead><tbody><tr><td>Missing route</td><td class=num>3</td><td class=num>13</td><td class=num>+234</td></tr><tr><td>Late cancellation</td><td class=num>7</td><td class=num>11</td><td class=num>+90</td></tr><tr><td>Coverage bonus</td><td class=num>2</td><td class=num>4</td><td class=num>+46</td></tr><tr><td>Duration mismatch</td><td class=num>6</td><td class=num>5</td><td class=num>-27</td></tr><tr><td>Rate mismatch</td><td class=num>7</td><td class=num>7</td><td class=num>-4</td></tr><tr><td>Training day</td><td class=num>3</td><td class=num>3</td><td class=num>-2</td></tr><tr><td><strong>Total</strong></td><td class=num><strong>28</strong></td><td class=num><strong>43</strong></td><td class=num><strong>+338 bps</strong></td></tr></tbody></table>
 <p><strong>Invalid disputes by rejection reason</strong></p>
 <table><thead><tr><th scope="col">Driver</th><th scope="col" class=num>Prev wk</th><th scope="col" class=num>This wk</th><th scope="col" class=num>Contribution (bps)</th></tr></thead><tbody><tr><td>Site confirmed no adjustment due</td><td class=num>1</td><td class=num>6</td><td class=num>+1038</td></tr><tr><td>Not supported by route plan</td><td class=num>6</td><td class=num>5</td><td class=num>-980</td></tr><tr><td>Unspecified</td><td class=num>0</td><td class=num>1</td><td class=num>+233</td></tr><tr><td>Submitted outside dispute window</td><td class=num>1</td><td class=num>2</td><td class=num>+108</td></tr><tr><td>Already paid</td><td class=num>2</td><td class=num>3</td><td class=num>-17</td></tr><tr><td><strong>Total</strong></td><td class=num><strong>10</strong></td><td class=num><strong>17</strong></td><td class=num><strong>+382 bps</strong></td></tr></tbody></table>
 <p><strong>SLA misses, week 43</strong></p>
 <table><thead><tr><th scope="col">Ticket</th><th scope="col">Site</th><th scope="col">Partner</th><th scope="col">Root cause</th><th scope="col" class=num>Hours late</th></tr></thead><tbody><tr><td>D-5856</td><td>IT04</td><td>Partner IT04-Y</td><td>Waiting on site input</td><td class=num>39.2</td></tr><tr><td>D-5855</td><td>IT04</td><td>Partner IT04-X</td><td>Waiting on site input</td><td class=num>29.6</td></tr><tr><td>D-5860</td><td>IT04</td><td>Partner IT04-Y</td><td>Waiting on site input</td><td class=num>26.8</td></tr><tr><td>D-5831</td><td>ES02</td><td>Partner ES02-Z</td><td>Waiting on site input</td><td class=num>26.2</td></tr><tr><td>D-5857</td><td>IT04</td><td>Partner IT04-Z</td><td>Waiting on site input</td><td class=num>23.2</td></tr><tr><td>D-5837</td><td>IT04</td><td>Partner IT04-X</td><td>Waiting on site input</td><td class=num>18.7</td></tr><tr><td>D-5859</td><td>IT04</td><td>Partner IT04-Y</td><td>Waiting on site input</td><td class=num>16.8</td></tr><tr><td>D-5858</td><td>IT04</td><td>Partner IT04-X</td><td>Waiting on site input</td><td class=num>6.9</td></tr></tbody></table>
-<h2>4. Anomalies and data notes</h2>
-<ul><li>6 invalid disputes in week 43 have no rejection reason recorded (e.g. D-5696, D-5768, D-5799); they are grouped as &#x27;Unspecified&#x27;.</li><li>4 site/partner/use-case combinations have more than two initial disputes in week 43; check for duplicate submissions.</li></ul></div></main>
-<footer>All data is synthetic. · <a href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> · <a href="mailto:sharmaprateek303@gmail.com">sharmaprateek303@gmail.com</a></footer>
+<h3>4. Anomalies and data notes</h3>
+<ul><li>6 invalid disputes in week 43 have no rejection reason recorded (e.g. D-5696, D-5768, D-5799); they are grouped as &#x27;Unspecified&#x27;.</li><li>4 site/partner/use-case combinations have more than two initial disputes in week 43; check for duplicate submissions.</li></ul></div></details>
+</section>
+
+<script>const DATA = {"week": 43, "target": 0.95, "tickets": 860, "lines": [{"line": "Line A", "rate": {"prev": 0.11293859649122807, "cur": 0.14301801801801803, "bps": 301, "n": 127, "base": 888, "drivers": [{"name": "Late cancellation", "prev": 30, "cur": 51, "bps": 245}, {"name": "Coverage bonus", "prev": 3, "cur": 9, "bps": 68}, {"name": "Missing route", "prev": 23, "cur": 17, "bps": -61}, {"name": "Rate mismatch", "prev": 16, "cur": 18, "bps": 27}, {"name": "Training day", "prev": 10, "cur": 12, "bps": 25}, {"name": "Duration mismatch", "prev": 21, "cur": 20, "bps": -5}]}, "invalid": {"prev": 0.3300970873786408, "cur": 0.36220472440944884, "bps": 321, "drivers": [{"name": "Already paid", "prev": 9, "cur": 4, "bps": -559}, {"name": "Not supported by route plan", "prev": 9, "cur": 16, "bps": 386}, {"name": "Submitted outside dispute window", "prev": 4, "cur": 8, "bps": 242}, {"name": "Site confirmed no adjustment due", "prev": 10, "cur": 14, "bps": 131}, {"name": "Unspecified", "prev": 2, "cur": 4, "bps": 121}]}, "sla": {"rate": 0.8976377952755905, "prev": 0.9611650485436893, "met": 114, "missed": 13, "open": 0, "causes": {"Waiting on site input": 10, "Late first response": 3}, "repeat": [["UK03", 5]], "misses": [{"id": "D-5695", "site": "FR02", "cause": "Waiting on site input", "late": 36.6}, {"id": "D-5814", "site": "UK03", "cause": "Waiting on site input", "late": 36.0}, {"id": "D-5713", "site": "DE02", "cause": "Waiting on site input", "late": 24.6}, {"id": "D-5796", "site": "UK03", "cause": "Waiting on site input", "late": 24.6}, {"id": "D-5687", "site": "DE05", "cause": "Waiting on site input", "late": 22.9}, {"id": "D-5811", "site": "UK03", "cause": "Waiting on site input", "late": 22.0}, {"id": "D-5714", "site": "UK04", "cause": "Waiting on site input", "late": 16.4}, {"id": "D-5710", "site": "UK03", "cause": "Waiting on site input", "late": 14.3}]}, "leadership": "Line A. The dispute rate rose 301 bps week over week to 14.3% (127 disputes on 888 eligible combinations), driven by Late cancellation (30 to 51, +245 bps) and Coverage bonus (3 to 9, +68 bps). The invalid rate rose 321 bps to 36.2%; the main rejection reasons moving were Already paid (9 to 4, -559 bps) and Not supported by route plan (9 to 16, +386 bps). SLA performance was 89.8%, below the 95.0% target (114 met, 13 missed, 0 still open within SLA). Missed tickets break down as 10 waiting on site input, 3 late first response. Site UK03 (5 misses) held tickets waiting on its input and is flagged for follow-up.", "speakable": "For Line A, the dispute rate rose 301 bps to 14.3% mostly from late cancellation. We resolved 89.8% of disputes within SLA, with 13 misses this week."}, {"line": "Line B", "rate": {"prev": 0.06763285024154589, "cur": 0.10141509433962265, "bps": 338, "n": 43, "base": 424, "drivers": [{"name": "Missing route", "prev": 3, "cur": 13, "bps": 234}, {"name": "Late cancellation", "prev": 7, "cur": 11, "bps": 90}, {"name": "Coverage bonus", "prev": 2, "cur": 4, "bps": 46}, {"name": "Duration mismatch", "prev": 6, "cur": 5, "bps": -27}, {"name": "Rate mismatch", "prev": 7, "cur": 7, "bps": -4}, {"name": "Training day", "prev": 3, "cur": 3, "bps": -2}]}, "invalid": {"prev": 0.35714285714285715, "cur": 0.3953488372093023, "bps": 382, "drivers": [{"name": "Site confirmed no adjustment due", "prev": 1, "cur": 6, "bps": 1038}, {"name": "Not supported by route plan", "prev": 6, "cur": 5, "bps": -980}, {"name": "Unspecified", "prev": 0, "cur": 1, "bps": 233}, {"name": "Submitted outside dispute window", "prev": 1, "cur": 2, "bps": 108}, {"name": "Already paid", "prev": 2, "cur": 3, "bps": -17}]}, "sla": {"rate": 0.813953488372093, "prev": 0.9642857142857143, "met": 35, "missed": 8, "open": 0, "causes": {"Waiting on site input": 8}, "repeat": [["IT04", 7]], "misses": [{"id": "D-5856", "site": "IT04", "cause": "Waiting on site input", "late": 39.2}, {"id": "D-5855", "site": "IT04", "cause": "Waiting on site input", "late": 29.6}, {"id": "D-5860", "site": "IT04", "cause": "Waiting on site input", "late": 26.8}, {"id": "D-5831", "site": "ES02", "cause": "Waiting on site input", "late": 26.2}, {"id": "D-5857", "site": "IT04", "cause": "Waiting on site input", "late": 23.2}, {"id": "D-5837", "site": "IT04", "cause": "Waiting on site input", "late": 18.7}, {"id": "D-5859", "site": "IT04", "cause": "Waiting on site input", "late": 16.8}, {"id": "D-5858", "site": "IT04", "cause": "Waiting on site input", "late": 6.9}]}, "leadership": "Line B. The dispute rate rose 338 bps week over week to 10.1% (43 disputes on 424 eligible combinations), driven by Missing route (3 to 13, +234 bps) and Late cancellation (7 to 11, +90 bps). The invalid rate rose 382 bps to 39.5%; the main rejection reasons moving were Site confirmed no adjustment due (1 to 6, +1038 bps) and Not supported by route plan (6 to 5, -980 bps). SLA performance was 81.4%, below the 95.0% target (35 met, 8 missed, 0 still open within SLA). Missed tickets break down as 8 waiting on site input. Site IT04 (7 misses) held tickets waiting on its input and is flagged for follow-up.", "speakable": "For Line B, the dispute rate rose 338 bps to 10.1% mostly from missing route. We resolved 81.4% of disputes within SLA, with 8 misses this week."}], "notes": ["6 invalid disputes in week 43 have no rejection reason recorded (e.g. D-5696, D-5768, D-5799); they are grouped as 'Unspecified'.", "4 site/partner/use-case combinations have more than two initial disputes in week 43; check for duplicate submissions."], "runtime": 0.007, "drivers": 22, "misses": 21};</script>
+<script>
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+const $ = s => document.querySelector(s);
+const escH = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function countTo(el, target, ms = 700, suffix = '') {
+  if (reduce) { el.textContent = target + suffix; return; }
+  const start = performance.now();
+  const tick = now => { const p = Math.min(1, (now - start) / ms); el.textContent = Math.round(target * p) + suffix; if (p < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+function termLine(term, html, max = 14) {
+  const d = document.createElement('div'); d.className = 'ln'; d.innerHTML = html; term.appendChild(d);
+  while (term.children.length > max) term.removeChild(term.firstChild);
+}
+async function typeText(el, text, cps = 220) {
+  el.classList.remove('done'); el.textContent = '';
+  if (reduce) { el.textContent = text; el.classList.add('done'); return; }
+  const step = Math.max(1, Math.round(cps / 60));
+  for (let i = 0; i < text.length; i += step) { el.textContent = text.slice(0, i + step); await new Promise(r => requestAnimationFrame(r)); }
+  el.classList.add('done');
+}
+
+const pct = v => v == null ? 'n/a' : (v * 100).toFixed(1) + '%';
+const sbps = v => (v > 0 ? '+' : '') + v + ' bps';
+let cur = 0, wf, sl;
+function kpi(label, value, delta, good) {
+  return `<div class="card stat"><div class="l">${label}</div><div class="v">${value}</div>
+  <div class="l" style="color:${good ? 'var(--good)' : 'var(--bad)'}">${delta}</div></div>`;
+}
+function renderLine(i) {
+  cur = i; const L = DATA.lines[i];
+  document.querySelectorAll('#tabs button').forEach((b, k) => b.setAttribute('aria-selected', k === i));
+  $('#kpis').innerHTML =
+    kpi('Dispute rate', pct(L.rate.cur), sbps(L.rate.bps) + ' WoW', L.rate.bps <= 0) +
+    kpi('Invalid rate', pct(L.invalid.cur), sbps(L.invalid.bps) + ' WoW', L.invalid.bps <= 0) +
+    kpi('SLA rate', pct(L.sla.rate), (L.sla.rate >= DATA.target ? 'above' : 'below') + ' the ' + pct(DATA.target) + ' target', L.sla.rate >= DATA.target) +
+    kpi('SLA misses', L.sla.missed, Object.keys(L.sla.causes).length + ' root cause(s) identified', L.sla.missed === 0);
+  const drivers = L.rate.drivers.filter(d => d.bps !== 0);
+  let run = L.rate.prev * 100; const labels = ['Week ' + (DATA.week - 1)], bars = [[0, run]], colors = ['#64748b'];
+  for (const d of drivers) { const nxt = run + d.bps / 100; labels.push(d.name); bars.push([run, nxt]); colors.push(d.bps > 0 ? '#d92d20' : '#1a7f37'); run = nxt; }
+  labels.push('Week ' + DATA.week); bars.push([0, L.rate.cur * 100]); colors.push('#2457c5');
+  const lo = Math.max(0, Math.floor(Math.min(...bars.flat().filter(v => v > 0)) - 1));
+  wf?.destroy();
+  wf = new Chart($('#ch-wf'), { type: 'bar', data: { labels, datasets: [{ data: bars, backgroundColor: colors, borderSkipped: false, borderRadius: 4 }] },
+    options: { maintainAspectRatio: false, plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => {
+      const [a, b] = c.raw; return c.dataIndex === 0 || c.dataIndex === labels.length - 1 ? b.toFixed(2) + '%' : ((b - a) > 0 ? '+' : '') + ((b - a) * 100).toFixed(0) + ' bps'; } } } },
+      scales: { y: { min: lo, ticks: { callback: v => v + '%' } }, x: { ticks: { maxRotation: 40, minRotation: 0 } } } } });
+  const causes = Object.keys(L.sla.causes);
+  sl?.destroy();
+  sl = new Chart($('#ch-sla'), { type: 'doughnut', data: { labels: causes.length ? causes : ['No misses'],
+      datasets: [{ data: causes.length ? causes.map(c => L.sla.causes[c]) : [1], backgroundColor: ['#f59e0b', '#d92d20', '#7c3aed', '#64748b'], borderWidth: 0 }] },
+    options: { maintainAspectRatio: false, cutout: '60%', plugins: { legend: { position: 'bottom' } } } });
+  $('#repeat').innerHTML = L.sla.repeat.map(([s, n]) => `<div class="card alert bad" style="margin-top:10px"><strong>⚑ Site ${escH(s)}</strong>:
+    ${n} tickets missed SLA while waiting on this site's input. Flagged for follow-up with the site lead.</div>`).join('');
+}
+async function setStep(i, state) {
+  const li = document.querySelectorAll('#steps li')[i]; li.className = state;
+  li.querySelector('.ic').textContent = state === 'done' ? '✓' : state === 'active' ? '' : i + 1;
+}
+async function generate() {
+  const btn = $('#gen'); btn.disabled = true; btn.textContent = 'Generating…';
+  for (let i = 0; i < 6; i++) setStep(i, '');
+  for (let i = 0; i < 6; i++) { await setStep(i, 'active'); await sleep(550); await setStep(i, 'done');
+    if (i === 3 && $('#analysis').classList.contains('hidden')) { $('#analysis').classList.remove('hidden'); $('#analysis').classList.add('fade'); renderLine(cur); } }
+  for (let i = 0; i < DATA.lines.length; i++) {
+    renderLine(i); $('#lead-line').textContent = '· ' + DATA.lines[i].line;
+    await typeText($('#typed'), DATA.lines[i].leadership); $('#speak').textContent = DATA.lines[i].speakable;
+    await sleep(1400);
+  }
+  btn.disabled = false; btn.textContent = '↻ Generate again';
+}
+$('#tabs').innerHTML = DATA.lines.map((l, i) => `<button type="button" role="tab" aria-selected="${i === 0}">${escH(l.line)}</button>`).join('');
+document.querySelectorAll('#tabs button').forEach((b, i) => b.addEventListener('click', () => {
+  renderLine(i); $('#lead-line').textContent = '· ' + DATA.lines[i].line; $('#typed').textContent = DATA.lines[i].leadership;
+  $('#typed').classList.add('done'); $('#speak').textContent = DATA.lines[i].speakable; }));
+$('#notes').innerHTML = DATA.notes.map(n => `<div class="card alert">⚠ ${escH(n)}</div>`).join('') || '<div class="card">No data issues found.</div>';
+$('#gen').addEventListener('click', generate);
+setTimeout(generate, 700);
+</script></main>
+<footer>All data is synthetic. · <a href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> · <a href="mailto:sharmaprateek303@gmail.com">sharmaprateek303@gmail.com</a> · <a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Source code</a></footer>
 </body></html>

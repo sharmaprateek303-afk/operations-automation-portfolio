@@ -3,9 +3,10 @@
 **[▶ Open the live demos](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/)**
 
 I turn manual, spreadsheet-heavy operations work into reliable, automated
-systems. These three projects come from partner-payment operations in a
+systems. These four projects come from partner-payment operations in a
 large-scale last-mile delivery network: tracking dispute SLAs, reconciling
-partner invoices, and explaining weekly metric movements to leadership.
+partner invoices, explaining weekly metric movements to leadership, and an AI
+agent that chases sites for dispute inputs with a human in the loop.
 
 > **About the data.** These are clean re-implementations built for this
 > portfolio. They contain no employer code or data: every station, partner,
@@ -20,6 +21,7 @@ partner invoices, and explaining weekly metric movements to leadership.
 | 1 | [Dispute SLA Dashboard](01-dispute-sla-dashboard) | Self-refreshing KPI dashboard tracking dispute resolution against a 3-business-day SLA, with an at-risk queue | Python (stdlib), JavaScript, Chart.js | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/dashboard/) |
 | 2 | [Invoice Reconciliation Engine](02-invoice-reconciliation) | Validates every invoice line against five operational feeds and produces matched / exception workbooks split across reviewers | Python, openpyxl | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/reconciliation/) |
 | 3 | [Weekly Business Review Bridges](03-weekly-business-review-bridges) | Explains week-over-week metric changes by driver, finds the root cause of each SLA miss, and writes the leadership narrative | Python (stdlib) | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/bridges/) |
+| 4 | [Human-in-the-Loop Outreach Agent](04-outreach-agent) | AI agent that reads waiting tickets, finds who to chase, checks chat history, drafts messages and waits for approval, inside hard guardrails | AI agent, Python | [Open](https://sharmaprateek303-afk.github.io/operations-automation-portfolio/outreach/) |
 
 ## Impact at a glance
 
@@ -28,12 +30,14 @@ partner invoices, and explaining weekly metric movements to leadership.
 | Invoice reconciliation | Hundreds of invoices checked line by line every week | **~80% cleared automatically**; people review only the exceptions | **~50 → ~12 hrs/week** |
 | Weekly business review prep | Reading ~200 tickets by hand per region | Bridge, narrative and tables generated in minutes | **~7 → ~0.5 hrs/week** |
 | Dispute SLA reporting | Weekly manual spreadsheet, breaches found days late | Live dashboard across 4 business lines in 2 regions, refreshed every 2 hours | **~5 hrs/week**, breaches seen same day |
-| **Total** | | | **~2,400 analyst hours a year, about 1.2 full-time roles** redeployed to higher-value work |
+| Site outreach for dispute inputs | Three manual chasing rounds a day | Agent prepares every message; a person approves in minutes | **~1.5 hrs → ~15 min/day** |
+| **Total** | | | **~2,700 analyst hours a year, about 1.4 full-time roles** redeployed to higher-value work |
 
 ## What ties them together
 
 - **One source of truth:** every number is derived from raw data by code, never typed in by hand.
 - **Explainable automation:** each result shows the evidence behind it, so reviewers can trust or challenge it.
+- **Humans in control:** the agent can't send anything without approval, and hard guardrails sit outside the AI.
 - **Humans on the exceptions:** automation clears the routine cases and routes the rest to people, balanced by workload.
 - **Built to be run by others:** scheduled refresh, self-healing services, clear outputs, tests.
 

@@ -1,23 +1,27 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Portfolio | Prateek Tiwari</title><link rel="stylesheet" href="assets/site.css"></head>
+<title>Portfolio | Prateek Tiwari</title><meta name="description" content="Operations automation portfolio by Prateek Tiwari">
+<link rel="stylesheet" href="assets/site.css"></head>
 <body><header class="top"><a class="brand" href="">Prateek Tiwari · Operations Automation</a>
-<a href="dashboard/">Dashboard</a><a href="reconciliation/">Reconciliation</a><a href="bridges/">WBR bridges</a>
-<a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Code on GitHub</a></header>
-<main><h1>Prateek Tiwari</h1>
-<p class="muted" style="font-size:17px;max-width:760px">I turn manual, spreadsheet-heavy operations work into reliable automated
-systems. These demos come from partner-payment operations in a large last-mile delivery network.</p>
-<p><a class="btn primary" href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> <a class="btn" href="mailto:sharmaprateek303@gmail.com">Email me</a>
-<a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Source code</a></p>
-<h2>Impact at a glance</h2><div class="grid g4"><div class="card stat"><div class="v">~2,400</div><div class="l">analyst hours saved per year</div></div><div class="card stat"><div class="v">~1.2</div><div class="l">full-time roles redeployed</div></div><div class="card stat"><div class="v">~80%</div><div class="l">invoices cleared without manual review</div></div><div class="card stat"><div class="v">30 min</div><div class="l">weekly review prep, down from ~7 hours</div></div></div>
-<h2>Projects</h2><div class="grid g3"><article class="card"><h3 style="margin-top:0">Dispute SLA Dashboard</h3><p>Live KPI dashboard tracking partner-payment disputes against a 3-business-day SLA, with region tabs, trend vs target, dispute mix and an at-risk queue.</p>
-<p><span class="tag">Python</span><span class="tag">REST API</span><span class="tag">JavaScript</span><span class="tag">Chart.js</span></p><p><strong>Impact:</strong> ~5 hrs/week of manual reporting removed; breaches seen the same day</p>
-<p><a class="btn primary" href="dashboard/">Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/01-dispute-sla-dashboard">View code</a></p></article><article class="card"><h3 style="margin-top:0">Invoice Reconciliation Engine</h3><p>Rule engine that validates every invoice line against five operational feeds and routes only the exceptions to reviewers, balanced by workload.</p>
-<p><span class="tag">Python</span><span class="tag">Rules engine</span><span class="tag">openpyxl</span><span class="tag">Excel automation</span></p><p><strong>Impact:</strong> ~80% of invoices cleared automatically; ~50 → ~12 hrs/week</p>
-<p><a class="btn primary" href="reconciliation/">Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/02-invoice-reconciliation">View code</a></p></article><article class="card"><h3 style="margin-top:0">Weekly Business Review Bridges</h3><p>Explains week-over-week metric moves by driver, finds the root cause of every SLA miss and writes the leadership narrative.</p>
-<p><span class="tag">Python</span><span class="tag">Root-cause analysis</span><span class="tag">Automated reporting</span></p><p><strong>Impact:</strong> Review prep cut from ~7 hours to ~30 minutes a week</p>
-<p><a class="btn primary" href="bridges/">Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/03-weekly-business-review-bridges">View code</a></p></article></div>
-<p class="note" style="margin-top:24px">These are clean re-implementations built for this portfolio. Every station, partner,
-ticket and number in the demos is synthetic. Impact figures are rounded estimates of time saved in the original work.</p></main>
-<footer>All data is synthetic. · <a href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> · <a href="mailto:sharmaprateek303@gmail.com">sharmaprateek303@gmail.com</a></footer>
+<a href="dashboard/">SLA dashboard</a><a href="reconciliation/">Reconciliation</a><a href="bridges/">WBR bridges</a>
+<a href="outreach/">Outreach agent</a><a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Code</a></header>
+<main><section class="hero"><span class="eyebrow">Operations analytics &amp; automation</span>
+<h1>Prateek Tiwari</h1><p class="lead">I turn manual, spreadsheet-heavy operations work into reliable automated systems:
+live dashboards, rule engines, auto-written leadership reports and an AI agent with a human in the loop. Built for
+partner-payment operations in a large last-mile delivery network.</p>
+<p><a class="btn light" href="#projects">See the projects</a> <a class="btn ghost" href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a>
+<a class="btn ghost" href="mailto:sharmaprateek303@gmail.com">Email me</a></p></section>
+<div class="grid g4"><div class="card stat"><div class="v">~2,700</div><div class="l">analyst hours saved per year</div></div><div class="card stat"><div class="v">~1.4</div><div class="l">full-time roles redeployed to higher-value work</div></div><div class="card stat"><div class="v">~80%</div><div class="l">of invoices cleared with no manual review</div></div><div class="card stat"><div class="v">4</div><div class="l">automations running in production</div></div></div>
+<h2 id="projects">Projects: click a demo to watch it run</h2><div class="grid g2"><article class="card"><div style="font-size:30px" aria-hidden="true">📊</div><h3 style="margin-top:6px">Dispute SLA Dashboard</h3><p>Live KPI dashboard tracking partner-payment disputes against a 3-business-day SLA, refreshed every 2 hours, with an at-risk queue so breaches are caught before they happen.</p>
+<p><span class="tag">Python</span><span class="tag">REST API</span><span class="tag">JavaScript</span><span class="tag">Chart.js</span></p><p><strong>Impact:</strong> ~5 hrs/week of manual reporting removed</p>
+<p><a class="btn primary" href="dashboard/">▶ Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/01-dispute-sla-dashboard">View code</a></p></article><article class="card"><div style="font-size:30px" aria-hidden="true">🧾</div><h3 style="margin-top:6px">Invoice Reconciliation Engine</h3><p>Rule engine that validates every invoice line against five operational feeds and routes only the exceptions to reviewers, balanced by workload.</p>
+<p><span class="tag">Python</span><span class="tag">Rules engine</span><span class="tag">Excel automation</span></p><p><strong>Impact:</strong> ~80% auto-cleared · ~50 → ~12 hrs/week</p>
+<p><a class="btn primary" href="reconciliation/">▶ Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/02-invoice-reconciliation">View code</a></p></article><article class="card"><div style="font-size:30px" aria-hidden="true">📈</div><h3 style="margin-top:6px">Weekly Business Review Bridges</h3><p>Explains every week-over-week metric move by driver, root-causes each SLA miss and writes the leadership narrative automatically.</p>
+<p><span class="tag">Python</span><span class="tag">Root-cause analysis</span><span class="tag">Automated reporting</span></p><p><strong>Impact:</strong> ~7 hrs → ~30 min per week</p>
+<p><a class="btn primary" href="bridges/">▶ Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/03-weekly-business-review-bridges">View code</a></p></article><article class="card"><div style="font-size:30px" aria-hidden="true">🤖</div><h3 style="margin-top:6px">Human-in-the-Loop Outreach Agent</h3><p>AI agent that chases sites for dispute inputs three times a day: reads tickets, finds contacts, checks chat, drafts messages and waits for approval, inside hard guardrails.</p>
+<p><span class="tag">AI agent</span><span class="tag">LLM guardrails</span><span class="tag">Chat-ops</span></p><p><strong>Impact:</strong> ~1.5 hrs/day → ~15 min review</p>
+<p><a class="btn primary" href="outreach/">▶ Open live demo</a> <a class="btn" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/04-outreach-agent">View code</a></p></article></div>
+<p class="note" style="margin-top:24px">These are clean re-implementations built for this portfolio. Every site, partner,
+person, ticket and number in the demos is synthetic. Impact figures are rounded estimates of time saved in the original work.</p></main>
+<footer>All data is synthetic. · <a href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> · <a href="mailto:sharmaprateek303@gmail.com">sharmaprateek303@gmail.com</a> · <a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Source code</a></footer>
 </body></html>

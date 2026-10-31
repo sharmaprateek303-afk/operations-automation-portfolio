@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Human-in-the-Loop Outreach Agent | Prateek Tiwari</title><meta name="description" content="Operations automation portfolio by Prateek Tiwari">
+<link rel="stylesheet" href="../assets/site.css"></head>
+<body><header class="top"><a class="brand" href="../">Prateek Tiwari · Operations Automation</a>
+<a href="../dashboard/">SLA dashboard</a><a href="../reconciliation/">Reconciliation</a><a href="../bridges/">WBR bridges</a>
+<a href="../outreach/">Outreach agent</a><a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Code</a></header>
+<main><section class="hero"><span class="eyebrow">Project 4 · AI agent with a human in the loop</span><h1>Human-in-the-Loop Outreach Agent</h1><p class="lead">Disputes stall when the site with the answer doesn&#x27;t reply. Three times a day this agent reads every waiting ticket, works out who to chase, checks who already replied, drafts the messages, and waits for a human to approve.</p>
+<div class="ba"><div class="box"><div class="k">Before</div><div class="big">~1.5 hrs/day</div><div class="s">opening each ticket, reading threads, chasing in chat by hand</div></div>
+<div class="arrow" aria-hidden="true">➜</div>
+<div class="box after"><div class="k">After</div><div class="big">~15 min/day</div><div class="s">the agent prepares everything; a person reviews and approves</div></div></div>
+<p><button class="btn light" id="go" type="button">▶ Run the 2 PM SEV-1 run</button> <a class="btn ghost" href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio/tree/main/04-outreach-agent">View code</a></p></section>
+<div class="console">
+  <div class="card"><h3 style="margin-top:0">Agent run</h3>
+    <ol class="steps" id="steps">
+      <li><span class="ic">1</span><div><strong>Load the queue</strong><div class="d" id="d0">filter to SEV-1, remove duplicates</div></div></li>
+      <li><span class="ic">2</span><div><strong>Fetch ticket details</strong><div class="d" id="d1">retry once, never drop silently</div></div></li>
+      <li><span class="ic">3</span><div><strong>Read every comment thread</strong><div class="d" id="d2">tagged contacts, latest comment, rejections</div></div></li>
+      <li><span class="ic">4</span><div><strong>Check chat history</strong><div class="d" id="d3">who was chased, and who replied</div></div></li>
+      <li><span class="ic">5</span><div><strong>Sort every ticket into one bucket</strong><div class="d" id="d4">counts must reconcile to the total</div></div></li>
+      <li class="" id="gate1"><span class="ic">✋</span><div><strong>Checkpoint: human review</strong><div class="d">the agent stops here and waits</div></div></li>
+      <li><span class="ic">6</span><div><strong>Draft messages + 7 safety checks each</strong><div class="d" id="d6">locked templates only</div></div></li>
+      <li class="" id="gate2"><span class="ic">✋</span><div><strong>Approval: nothing is sent without it</strong><div class="d">"approve all", or edit</div></div></li>
+      <li><span class="ic">7</span><div><strong>Send + write the audit log</strong><div class="d" id="d8">never-message list re-checked before every send</div></div></li>
+    </ol>
+  </div>
+  <div class="terminal" id="term" style="height:auto;min-height:420px" aria-live="off"></div>
+</div>
+
+<section id="checkpoint" class="hidden" style="margin-top:16px">
+  <div class="card gate"><h3 style="margin-top:0">✋ Checkpoint: the agent is waiting for you</h3>
+    <div class="grid g4" id="bucketcards"></div>
+    <div id="flags" style="margin-top:12px"></div>
+    <details style="margin-top:12px"><summary><strong>Tickets the agent will not message, and why</strong></summary><div class="body"><table>
+      <thead><tr><th scope="col">Site</th><th scope="col">Bucket</th><th scope="col">Reason</th><th scope="col">Latest comment</th></tr></thead><tbody id="parked"></tbody></table></div></details>
+    <p style="margin-top:14px"><button class="btn primary" id="cont" type="button">Looks right: draft the messages</button></p>
+  </div>
+</section>
+
+<section id="draftsec" class="hidden" style="margin-top:16px">
+  <div class="card gate"><h3 style="margin-top:0">✋ Approval: <span id="ndrafts"></span> drafts, all checks shown</h3>
+    <p class="muted" id="checklegend"></p>
+    <div style="overflow-x:auto"><table><thead><tr><th scope="col">Site</th><th scope="col">Message to</th><th scope="col">Excluded tags</th>
+      <th scope="col">Latest comment (shown to approver)</th><th scope="col">7 checks</th></tr></thead><tbody id="drafts"></tbody></table></div>
+    <p style="margin-top:14px"><strong>Good to send?</strong> <button class="btn primary" id="approve" type="button">✅ Approve all</button></p>
+  </div>
+</section>
+
+<section id="sendsec" class="hidden" style="margin-top:16px">
+  <div class="grid g2">
+    <div class="chat"><div class="bar"><span># group DMs · outreach agent</span><span id="sentcount">0 sent</span></div><div class="feed" id="feed"></div></div>
+    <div class="card"><h3 style="margin-top:0">Audit log</h3><div id="log" class="muted">writing…</div></div>
+  </div>
+</section>
+
+<h2>Guardrails the agent can't talk its way around</h2>
+<div class="grid g3"><div class="card guard"><div class="gi" aria-hidden="true">🛑</div><div><strong>Never sends without approval</strong><div class="muted">The send step takes an approval callback and does nothing without it.</div></div></div><div class="card guard"><div class="gi" aria-hidden="true">🚫</div><div><strong>Never-message list</strong><div class="muted">Enforced when drafting and again immediately before every send, @mentions included.</div></div></div><div class="card guard"><div class="gi" aria-hidden="true">🤔</div><div><strong>Never guesses a contact</strong><div class="muted">No tagged contact means &#x27;please advise&#x27;, never a best guess.</div></div></div><div class="card guard"><div class="gi" aria-hidden="true">🧮</div><div><strong>Never drops a ticket</strong><div class="muted">Every ticket lands in exactly one bucket; the run fails if counts don&#x27;t reconcile.</div></div></div><div class="card guard"><div class="gi" aria-hidden="true">🔒</div><div><strong>Never rewords a template</strong><div class="muted">Only the link changes; text is checked against the template exactly.</div></div></div><div class="card guard"><div class="gi" aria-hidden="true">🙋</div><div><strong>Never decides unclear cases</strong><div class="muted">Reopened or ambiguous rejections are flagged for a human.</div></div></div></div>
+
+<script>const DATA = {"runtime": 0.001, "raw_rows": 32, "sev_rows": 27, "total": 25, "dupes": 2, "fetched": 24, "fetch_failed": 1, "retries": 1, "contacts": 29, "excluded": 2, "dropped": 2, "history": 5, "replied": 3, "no_reply": 2, "rejections": {"all": 2, "partial": 1, "unclear": 1}, "counts": {"Could not process": 2, "Rejected": 2, "Already covered": 3, "Needs outreach": 18}, "buckets": ["Could not process", "Rejected", "Already covered", "Needs outreach"], "flags": [{"site": "DE13", "flag": "Partly rejected: message contacts only for the items still open."}, {"site": "FR17", "flag": "Rejection mentioned but the ticket was reopened: please decide."}], "parked": [{"site": "FR11", "bucket": "Already covered", "reason": "Contact replied in chat", "glimpse": "ops-ravi (2026-10-26T11:20): Hi @sl-fr11-omar @sl-fr11-ali, the partner is asking for coverage bonus on 2026-10-21. Could you confirm the 3 extra routes were requested by the site?"}, {"site": "ES27", "bucket": "Already covered", "reason": "Contact replied in chat", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-es27-nina, could you please confirm the routes for 2026-10-18 and 2026-10-24? The partner has disputed 9 routes as late cancellations."}, {"site": "ES06", "bucket": "Already covered", "reason": "Contact replied in chat", "glimpse": "ops-tom (2026-10-26T11:20): Hi @sl-es06-ali @sl-es06-maya, can you confirm whether the 3 training days on 2026-10-18 were approved by the site?"}, {"site": "FR23", "bucket": "Rejected", "reason": "Every item on the dispute was rejected", "glimpse": "ops-meera (2026-10-27T16:05): Dispute rejected as per the route plan: no adjustment is due for any of the disputed dates."}, {"site": "ES06", "bucket": "Rejected", "reason": "Every item on the dispute was rejected", "glimpse": "ops-tom (2026-10-27T16:05): Dispute rejected as per the route plan: no adjustment is due for any of the disputed dates."}, {"site": "IT11", "bucket": "Could not process", "reason": "No contact identified: ask before guessing", "glimpse": "ops-ravi (2026-10-26T11:20): Checking the route plan for this week; will update."}, {"site": "unknown", "bucket": "Could not process", "reason": "Ticket lookup failed twice: ticket service did not respond", "glimpse": "No team comment found"}], "drafts": [{"site": "UK17", "country": "UK", "partner": "Demo Logistics P646", "to": ["sl-uk17-ben", "ops-anna"], "excluded": [], "copy": "ops-anna", "glimpse": "ops-anna (2026-10-26T11:20): Hi @sl-uk17-ben, please share the planned vs actual duration for 2026-10-22; the partner says 5 blocks ran longer than planned.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P379294475/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "ES23", "country": "ES", "partner": "Demo Logistics P840", "to": ["sl-es23-ana", "sl-es23-lea", "ops-ravi"], "excluded": [], "copy": "ops-ravi", "glimpse": "ops-ravi (2026-10-26T11:20): Hi @sl-es23-ana @sl-es23-lea, please share the planned vs actual duration for 2026-10-21; the partner says 2 blocks ran longer than planned.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P643800304/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "IT26", "country": "IT", "partner": "Demo Logistics P656", "to": ["sl-it26-lea", "sl-it26-omar", "ops-anna"], "excluded": [], "copy": "ops-anna", "glimpse": "ops-anna (2026-10-26T11:20): Hi @sl-it26-lea @sl-it26-omar, the partner is asking for coverage bonus on 2026-10-18. Could you confirm the 5 extra routes were requested by the site?", "reason": "Messaged before, no reply yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P608282291/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "ES14", "country": "ES", "partner": "Demo Logistics P131", "to": ["sl-es14-omar", "ops-anna"], "excluded": [], "copy": "ops-anna", "glimpse": "ops-anna (2026-10-26T11:20): Hi @sl-es14-omar, the partner is asking for coverage bonus on 2026-10-20. Could you confirm the 3 extra routes were requested by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P303747271/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "DE13", "country": "DE", "partner": "Demo Logistics P139", "to": ["sl-de13-leo", "ops-tom"], "excluded": [], "copy": "ops-tom", "glimpse": "ops-tom (2026-10-27T16:05): Dispute rejected for 2026-10-22. The remaining date 2026-10-23 is still open, @sl-de13-leo please confirm.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P370489605/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "DE13", "country": "DE", "partner": "Demo Logistics P301", "to": ["sl-de13-jon", "sl-de13-raj", "ops-ravi"], "excluded": [], "copy": "ops-ravi", "glimpse": "ops-ravi (2026-10-26T11:20): Hi @sl-de13-jon @sl-de13-raj, the partner is asking for coverage bonus on 2026-10-18. Could you confirm the 3 extra routes were requested by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P191588838/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "DE26", "country": "DE", "partner": "Demo Logistics P633", "to": ["sl-de26-ali", "ops-meera"], "excluded": [], "copy": "ops-meera", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-de26-ali, the partner is asking for coverage bonus on 2026-10-22. Could you confirm the 8 extra routes were requested by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P308568163/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "IT28", "country": "IT", "partner": "Demo Logistics P572", "to": ["sl-it28-ben", "ops-anna"], "excluded": ["finance-lead"], "copy": "ops-anna", "glimpse": "ops-anna (2026-10-26T11:20): Hi @sl-it28-ben @finance-lead, could you please confirm the routes for 2026-10-21 and 2026-10-23? The partner has disputed 4 routes as late cancellations.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P412257068/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "ES20", "country": "ES", "partner": "Demo Logistics P829", "to": ["sl-es20-omar", "ops-ravi"], "excluded": [], "copy": "ops-ravi", "glimpse": "ops-ravi (2026-10-26T11:20): Hi @sl-es20-omar, please share the planned vs actual duration for 2026-10-21; the partner says 5 blocks ran longer than planned.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P240501447/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "UK24", "country": "UK", "partner": "Demo Logistics P932", "to": ["sl-uk24-ali", "ops-meera"], "excluded": [], "copy": "ops-meera", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-uk24-ali @ops-ravi @label-sync, can you confirm whether the 5 training days on 2026-10-20 were approved by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P138961233/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "FR19", "country": "FR", "partner": "Demo Logistics P236", "to": ["sl-fr19-ben", "ops-anna"], "excluded": [], "copy": "ops-anna", "glimpse": "ops-anna (2026-10-26T11:20): Hi @sl-fr19-ben, please share the planned vs actual duration for 2026-10-20; the partner says 5 blocks ran longer than planned.", "reason": "Messaged before, no reply yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P391974624/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "UK01", "country": "UK", "partner": "Demo Logistics P545", "to": ["sl-uk01-zoe", "ops-meera"], "excluded": [], "copy": "ops-meera", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-uk01-zoe, could you please confirm the routes for 2026-10-21 and 2026-10-23? The partner has disputed 9 routes as late cancellations.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P353465645/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "UK22", "country": "UK", "partner": "Demo Logistics P868", "to": ["sl-uk22-raj", "ops-tom"], "excluded": ["finance-lead"], "copy": "ops-tom", "glimpse": "ops-tom (2026-10-26T11:20): Hi @sl-uk22-raj @finance-lead, could you please confirm the routes for 2026-10-18 and 2026-10-24? The partner has disputed 5 routes as late cancellations.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P318097333/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "FR08", "country": "FR", "partner": "Demo Logistics P908", "to": ["sl-fr08-sam", "sl-fr08-raj", "ops-meera"], "excluded": [], "copy": "ops-meera", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-fr08-sam @sl-fr08-raj, can you confirm whether the 3 training days on 2026-10-22 were approved by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P173814827/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "ES07", "country": "ES", "partner": "Demo Logistics P657", "to": ["sl-es07-raj", "ops-tom"], "excluded": [], "copy": "ops-tom", "glimpse": "ops-tom (2026-10-26T11:20): Hi @sl-es07-raj, please share the planned vs actual duration for 2026-10-19; the partner says 9 blocks ran longer than planned.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P635292400/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "IT12", "country": "IT", "partner": "Demo Logistics P263", "to": ["sl-it12-ana", "ops-meera"], "excluded": [], "copy": "ops-meera", "glimpse": "ops-meera (2026-10-26T11:20): Hi @sl-it12-ana, please share the planned vs actual duration for 2026-10-21; the partner says 4 blocks ran longer than planned.", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P560981197/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}, {"site": "ES07", "country": "ES", "partner": "Demo Logistics P306", "to": ["sl-es07-nina", "ops-ravi"], "excluded": [], "copy": "ops-ravi", "glimpse": "ops-ravi (2026-10-26T11:20): Hi @sl-es07-nina, the partner is asking for coverage bonus on 2026-10-18. Could you confirm the 7 extra routes were requested by the site?", "reason": "No outreach yet", "checks": [true, true, true, true, true, true, true], "text": "Hi, hope you are having a great day! Reaching out about this ticket to get your inputs: https://tickets.example.com/P240769961/communication We need all inputs within 72 hours of the SLA so the partner is paid on time. Thank you in advance."}], "check_names": ["Link is https and uses the ticket reference, followed by a space", "Recipients present, no duplicates, no bots", "No team member except the SEV-1 copy", "No never-message person anywhere", "Text matches the locked template exactly", "Not already messaged in this window", "Latest comment glimpse shown to the approver"], "sent": 17};</script>
+<script>
+const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sleep = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+const $ = s => document.querySelector(s);
+const escH = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function countTo(el, target, ms = 700, suffix = '') {
+  if (reduce) { el.textContent = target + suffix; return; }
+  const start = performance.now();
+  const tick = now => { const p = Math.min(1, (now - start) / ms); el.textContent = Math.round(target * p) + suffix; if (p < 1) requestAnimationFrame(tick); };
+  requestAnimationFrame(tick);
+}
+function termLine(term, html, max = 14) {
+  const d = document.createElement('div'); d.className = 'ln'; d.innerHTML = html; term.appendChild(d);
+  while (term.children.length > max) term.removeChild(term.firstChild);
+}
+async function typeText(el, text, cps = 220) {
+  el.classList.remove('done'); el.textContent = '';
+  if (reduce) { el.textContent = text; el.classList.add('done'); return; }
+  const step = Math.max(1, Math.round(cps / 60));
+  for (let i = 0; i < text.length; i += step) { el.textContent = text.slice(0, i + step); await new Promise(r => requestAnimationFrame(r)); }
+  el.classList.add('done');
+}
+
+const term = $('#term');
+const steps = () => document.querySelectorAll('#steps li');
+function step(i, state, detail) {
+  const li = steps()[i]; li.className = state; const ic = li.querySelector('.ic');
+  if (state === 'done') ic.textContent = '✓'; if (state === 'active') ic.textContent = '';
+  if (state === 'gate') ic.textContent = '✋';
+  if (detail) li.querySelector('.d').innerHTML = detail;
+}
+const log = (h, cls = '') => termLine(term, cls ? `<span class="${cls}">${h}</span>` : h, 30);
+async function phase1() {
+  $('#go').disabled = true; term.innerHTML = ''; steps().forEach((li, i) => { li.className = ''; });
+  log('$ agent run --severity SEV-1 --run first   # 14:00 slot ✓ matches schedule', 'hd');
+  step(0, 'active'); await sleep(600);
+  log(`queue: ${DATA.raw_rows} rows → ${DATA.sev_rows} SEV-1 → ${DATA.total} unique (${DATA.dupes} duplicates removed)`);
+  step(0, 'done', `${DATA.total} tickets, ${DATA.dupes} duplicates removed`);
+  step(1, 'active'); await sleep(700);
+  log(`fetched ${DATA.fetched}/${DATA.total} tickets`);
+  if (DATA.fetch_failed) log(`✗ ${DATA.fetch_failed} lookup failed twice → "Could not process" (not dropped)`, 'rv');
+  step(1, 'done', `${DATA.fetched} fetched · ${DATA.fetch_failed} parked after retry`);
+  step(2, 'active'); await sleep(800);
+  log(`contacts found: ${DATA.contacts} · team/bot tags dropped: ${DATA.dropped}`);
+  log(`🚫 never-message tags excluded: ${DATA.excluded}`, 'rv');
+  log(`rejections: ${DATA.rejections.all} full · ${DATA.rejections.partial} partial · ${DATA.rejections.unclear} unclear (flagged)`);
+  step(2, 'done', `${DATA.contacts} contacts · ${DATA.excluded} excluded · ${DATA.rejections.all + DATA.rejections.partial + DATA.rejections.unclear} rejections read`);
+  step(3, 'active'); await sleep(600);
+  log(`chat since yesterday: ${DATA.history} messages · ${DATA.replied} contacts already replied · ${DATA.no_reply} chased without reply`);
+  step(3, 'done', `${DATA.replied} already replied · ${DATA.no_reply} to chase again`);
+  step(4, 'active'); await sleep(600);
+  const c = DATA.counts, sum = Object.values(c).reduce((a, b) => a + b, 0);
+  log(`buckets: ${DATA.buckets.map(b => b + ' ' + c[b]).join(' · ')} = ${sum} ✓ reconciles`, 'ok');
+  step(4, 'done', DATA.buckets.map(b => `${b} ${c[b]}`).join(' · '));
+  step(5, 'gate'); log('⏸ checkpoint: waiting for human review', 'hd');
+  $('#bucketcards').innerHTML = DATA.buckets.map(b => `<div class="card stat"><div class="v">${c[b]}</div><div class="l">${b}</div></div>`).join('');
+  $('#flags').innerHTML = DATA.flags.map(f => `<div class="card alert" style="margin-top:8px">⚑ <strong>${escH(f.site)}</strong>: ${escH(f.flag)}</div>`).join('');
+  $('#parked').innerHTML = DATA.parked.map(p => `<tr><td>${escH(p.site)}</td><td>${escH(p.bucket)}</td><td>${escH(p.reason)}</td><td class="muted">${escH(p.glimpse)}</td></tr>`).join('');
+  $('#checkpoint').classList.remove('hidden'); $('#checkpoint').classList.add('fade');
+  $('#checkpoint').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+}
+async function phase2() {
+  $('#cont').disabled = true; step(5, 'done'); log('✓ human approved the buckets', 'ok');
+  step(6, 'active'); await sleep(700);
+  const passed = DATA.drafts.filter(d => d.checks.every(Boolean)).length;
+  log(`drafted ${DATA.drafts.length} messages from locked templates · ${passed}/${DATA.drafts.length} passed all 7 checks`, 'ok');
+  step(6, 'done', `${DATA.drafts.length} drafts · ${passed} passed all 7 checks`);
+  step(7, 'gate'); log('⏸ approval: nothing will be sent until a person approves', 'hd');
+  $('#ndrafts').textContent = DATA.drafts.length;
+  $('#checklegend').textContent = 'Checks: ' + DATA.check_names.map((n, i) => (i + 1) + ') ' + n).join(' · ');
+  $('#drafts').innerHTML = DATA.drafts.map(d => `<tr><td><strong>${escH(d.site)}</strong><div class="muted">${escH(d.reason)}</div></td>
+    <td>${d.to.map(escH).join(', ')}${d.copy ? `<div class="muted">team copy: ${escH(d.copy)}</div>` : ''}</td>
+    <td>${d.excluded.length ? `<span class="pill N">${d.excluded.map(escH).join(', ')}</span>` : '<span class="muted">none</span>'}</td>
+    <td class="muted" style="max-width:360px">${escH(d.glimpse)}</td>
+    <td><span class="checks" aria-label="${d.checks.filter(Boolean).length} of 7 checks passed">${d.checks.map(ok => `<span class="${ok ? '' : 'f'}"></span>`).join('')}</span></td></tr>`).join('');
+  $('#draftsec').classList.remove('hidden'); $('#draftsec').classList.add('fade');
+  $('#draftsec').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+}
+async function phase3() {
+  $('#approve').disabled = true; step(7, 'done'); log('✓ approved: "approve all"', 'ok');
+  step(8, 'active');
+  $('#sendsec').classList.remove('hidden'); $('#sendsec').classList.add('fade');
+  $('#sendsec').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+  const feed = $('#feed'); let n = 0;
+  for (const d of DATA.drafts) {
+    const link = d.text.match(/https:\S+/)[0];
+    const div = document.createElement('div'); div.className = 'msg fade';
+    div.innerHTML = `<div class="avatar">OA</div><div><div class="who">Outreach Agent <span class="to">to ${d.to.map(escH).join(', ')}</span></div>
+      <div class="txt">${escH(d.text).replace(escH(link), `<a href="#" onclick="return false">${escH(link)}</a>`)}</div></div>`;
+    feed.appendChild(div); feed.scrollTop = feed.scrollHeight;
+    n++; $('#sentcount').textContent = n + ' sent';
+    log(`→ sent to ${d.to.join(', ')} (${d.site})`);
+    await sleep(260);
+  }
+  const c = DATA.counts;
+  $('#log').innerHTML = `<table><tbody>
+    <tr><td>Tickets in run</td><td class="num">${DATA.total}</td></tr><tr><td>Duplicates removed</td><td class="num">${DATA.dupes}</td></tr>
+    ${DATA.buckets.map(b => `<tr><td>${b}</td><td class="num">${c[b]}</td></tr>`).join('')}
+    <tr><td>Messages sent</td><td class="num"><strong>${DATA.sent}</strong></td></tr>
+    <tr><td>Messages to never-message people</td><td class="num"><strong>0</strong></td></tr>
+    <tr><td>Agent processing time</td><td class="num">${DATA.runtime} s</td></tr></tbody></table>
+    <p class="note">Appended to today's log file with every ticket, its bucket, contacts, excluded tags and send status.</p>`;
+  step(8, 'done', `${DATA.sent} sent · log written`);
+  log(`run complete · ${DATA.sent} sent · log written`, 'ok');
+  $('#go').disabled = false; $('#go').textContent = '↻ Run again';
+}
+$('#go').addEventListener('click', () => { ['#checkpoint', '#draftsec', '#sendsec'].forEach(s => $(s).classList.add('hidden'));
+  ['#cont', '#approve'].forEach(s => $(s).disabled = false); $('#feed').innerHTML = ''; phase1(); });
+$('#cont').addEventListener('click', phase2);
+$('#approve').addEventListener('click', phase3);
+setTimeout(phase1, 700);
+</script></main>
+<footer>All data is synthetic. · <a href="https://www.linkedin.com/in/prateek-tiwari-377262135/">LinkedIn</a> · <a href="mailto:sharmaprateek303@gmail.com">sharmaprateek303@gmail.com</a> · <a href="https://github.com/sharmaprateek303-afk/operations-automation-portfolio">Source code</a></footer>
+</body></html>
